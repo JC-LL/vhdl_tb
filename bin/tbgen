@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/compiler'
+compiler=VHDL_TB::Compiler.new
+compiler.analyze_options(ARGV)
+compiler.generate
