@@ -107,7 +107,7 @@ module VHDL_TB
       keyword 'xorkeyword '
 
       #.............................................................
-      token :comments          => /\A\-\-(.*)$/
+      token :comment          => /\A\-\-(.*)$/
       token :selected_name     => /\w+(\.\w+)+/ # /\S+\w+\.\w+/
       token :identifier        => /[a-zA-Z]\w*/
 
