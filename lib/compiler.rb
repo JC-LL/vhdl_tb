@@ -20,9 +20,7 @@ module VHDL_TB
    end
 
    def banner
-     #puts "-- "+"="*30
      puts "==> VHDL testbench generator #{VERSION} <=="
-     #puts "-- "+"="*30
    end
 
    def analyze_options args
@@ -68,6 +66,7 @@ module VHDL_TB
        puts "testbench generated : #{tb_filename}"
      rescue Exception => e
        puts e
+       puts e.backtrace
        abort
      end
    end
@@ -102,14 +101,14 @@ module VHDL_TB
      end
 
      if @arch.entity.val!=@entity.name.val
-       errors << "wrong entity-architecture pair : entity is -->#{@entity.name}<-- vs arch #{@arch.name} of -->#{@arch.entity.name}<--"
+       errors << "wrong entity-architecture pair : entity is -->#{@entity.name}<-- vs arch #{@arch.name} of -->#{@arch.entity}<--"
      end
 
      if errors.any?
        puts ": nok"
        puts "\nchecks failed due to the following errors :"
        errors.each{|e| puts "- ERROR : #{e}"}
-       raise
+       raise "check error"
      else
        puts ": ok"
      end

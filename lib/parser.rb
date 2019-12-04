@@ -19,7 +19,7 @@ module VHDL_TB
         raise "ERROR : cannot find file '#{filename}'"
       end
       begin
-        str=IO.read(filename)
+        str=IO.read(filename).downcase
         tokens=lexer.tokenize(str)
         tokens=tokens.select{|t| t.class==Token} # filters [nil,nil,nil]
         return tokens.reject{|tok| tok.is_a? [:comment,:newline,:space]}
