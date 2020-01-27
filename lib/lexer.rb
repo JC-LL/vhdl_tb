@@ -138,6 +138,7 @@ module VHDL_TB
       token :lt                => /\A\</
       token :urange            => /\A<>/
       token :dot               => /\A\./
+      token :bar               => /\|/
       #............................................................
       token :newline           =>  /[\n]/
       token :space             => /[ \t\r]+/

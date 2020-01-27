@@ -22,8 +22,11 @@ module VHDL_TB
         str=IO.read(filename).downcase
         tokens=lexer.tokenize(str)
         tokens=tokens.select{|t| t.class==Token} # filters [nil,nil,nil]
-        return tokens.reject{|tok| tok.is_a? [:comment,:newline,:space]}
+        tokens.reject!{|tok| tok.is_a? [:comment,:newline,:space]}
+        return tokens
       rescue Exception=>e
+        puts e.backtrace
+        puts e
         puts "an error occured during LEXICAL analysis. Sorry. Aborting."
         raise
       end
@@ -31,6 +34,7 @@ module VHDL_TB
 
     def parse filename
       @tokens=lex(filename)
+      #pp @tokens
       root=Root.new([])
       begin
         consume_to :entity
