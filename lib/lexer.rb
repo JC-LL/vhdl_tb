@@ -1,7 +1,7 @@
 require_relative 'generic_lexer'
 require_relative 'generic_parser'
 
-module VHDL_TB
+module VHDL
   class Lexer < GenericLexer
     def initialize
       super
@@ -93,6 +93,7 @@ module VHDL_TB
       keyword 'then'
       keyword 'to'
       keyword 'transport'
+      keyword 'time'
       keyword 'type'
       keyword 'unaffected'
       keyword 'units'
@@ -105,11 +106,15 @@ module VHDL_TB
       keyword 'with'
       keyword 'xnor'
       keyword 'xorkeyword '
+      keyword 'ns'
+      keyword 'ps'
+      keyword 'ms'
 
       #.............................................................
-      token :comment          => /\A\-\-(.*)$/
+      token :comment           => /\A\-\-(.*)$/
+
       token :selected_name     => /\w+(\.\w+)+/ # /\S+\w+\.\w+/
-      token :identifier        => /[a-zA-Z]\w*/
+      token :ident             => /[a-zA-Z]\w*/
 
       token :string_literal    => /"[^"]*"/
       token :char_literal      => /'(\w+)'/
@@ -123,19 +128,25 @@ module VHDL_TB
       token :semicolon         => /\A\;/
       token :lparen            => /\A\(/
       token :rparen            => /\A\)/
-      token :plus              => /\A\+/
-      token :minus             => /\A\-/
-      token :times             => /\A\*/
+
+      # arith
+      token :add               => /\A\+/
+      token :sub               => /\A\-/
+      token :mul               => /\A\*/
       token :div               => /\A\//
 
-      token :sassign           => /\A\<\=/
       token :imply             => /\A\=\>/
+      # logical
       token :eq                => /\A\=/
-      token :ampersand         => /\A\&/
       token :neq               => /\A\/\=/
       token :gte               => /\A\>\=/
       token :gt                => /\A\>/
       token :lt                => /\A\</
+
+      token :sassign           => /\A\<\=/
+
+      token :ampersand         => /\A\&/
+
       token :urange            => /\A<>/
       token :dot               => /\A\./
       token :bar               => /\|/

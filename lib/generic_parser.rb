@@ -18,8 +18,23 @@ class GenericParser
     end
   end
 
+  def maybe kind
+    if showNext.kind==kind
+      return acceptIt
+    end
+    nil
+  end
+
   def more?
     !tokens.empty?
+  end
+
+  def lookahead n
+    showNext(k=n)
+  end
+
+  def niy
+    raise "NIY"
   end
 
 end

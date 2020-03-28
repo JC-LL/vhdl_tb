@@ -2,13 +2,13 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
- 
+
 library ruby_rtl;
 use ruby_rtl.ruby_rtl_package.all;
- 
+
 library pgcd_lib;
 use pgcd_lib.pgcd_package.all;
- 
+
 entity pgcd_c is
   port (
     reset_n : in std_logic;
@@ -22,14 +22,14 @@ entity pgcd_c is
     b : in  unsigned(31 downto 0);
     f : out unsigned(31 downto 0));
 end pgcd_c;
- 
+
 architecture rtl of Pgcd_c is
   type gcd_state_t is (s0,s1,s2,s3);
   signal gcd_state : gcd_state_t;
   signal va : unsigned(31 downto 0);
   signal vb : unsigned(31 downto 0);
 begin
- 
+
   gcd_update : process(reset_n,clk)
   begin
     if reset_n='0' then
@@ -43,7 +43,7 @@ begin
         va <= to_unsigned(0,32);
         vb <= to_unsigned(0,32);
         done <= '0';
-      else 
+      else
         case gcd_state is
           when s0 =>
             if (to_uint(go,1) = 1) then
@@ -63,10 +63,10 @@ begin
             if (va /= vb) then
               if (va < vb) then
                 va <= (va - vb);
-              else 
+              else
                 vb <= (vb - va);
               end if;
-            else 
+            else
               done <= to_bit(1,1);
               gcd_state <= s0;
             end if;
@@ -76,5 +76,5 @@ begin
       end if;
     end if;
   end process;
- 
+
 end rtl;
