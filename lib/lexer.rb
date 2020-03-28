@@ -115,6 +115,7 @@ module VHDL
       token :comment           => /\A\-\-(.*)$/
 
       token :selected_name     => /\w+(\.\w+)+/ # /\S+\w+\.\w+/
+      token :bit_string_literal => /([bB]|[oO]|[xX])"[^_]\w+"/
       token :ident             => /[a-zA-Z]\w*/
 
       token :string_literal    => /"[^"]*"/
@@ -122,8 +123,8 @@ module VHDL
       token :attribute_literal => /'(\w+)/
       token :decimal_literal   => /\d+(\.\d+)?(E([+-]?)\d+)?/
       token :based_literal     => /\d+#\w+(\.\w+)?#(E[+-]?\d+)/
-      token :bit_string_literal => /(b|o|x)"[^_]\w+"/
       token :vassign           => /\A\:\=/
+      token :sassign           => /\A\<\=/
       token :comma             => /\A\,/
       token :colon             => /\A\:/
       token :semicolon         => /\A\;/

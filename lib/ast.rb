@@ -37,23 +37,15 @@ module VHDL
       end
     end
 
-
-    Binary=Struct.new(:lhs,:op,:rhs) do
-      def to_s
-        "#{self.lhs} #{self.op} #{self.rhs}"
-      end
-    end
-
     class Expression < AstNode
     end
 
     class Binary < Expression
       attr_accessor :lhs,:op,:rhs
-      def initialize
+      def initialize lhs=nil,op=nil,rhs=nil
+        @lhs,@op,@rhs=lhs,op,rhs
       end
     end
-
-
 
     class FuncCall
       attr_accessor :name,:actual_args

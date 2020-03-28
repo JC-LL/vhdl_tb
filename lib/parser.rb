@@ -175,7 +175,7 @@ module VHDL
         ids << expect(:ident)
       end
       expect :colon
-      if showNext.is_a? [:in,:out]
+      if showNext.is_a? [:in,:out,:inout]
         dir=acceptIt
         dir=dir.kind
       end
@@ -283,10 +283,31 @@ module VHDL
       expect :semicolon
     end
 
+    def parse_record
+      expect :record
+      while showNext.not_a?(:end)
+        parse_record_item
+      end
+      expect :end
+      expect :record
+    end
+
+    def parse_record_item
+      expect :ident
+      while showNext.is_a?(:comma)
+        acceptIt
+        expect :ident
+      end
+      expect :colon
+      parse_type
+      expect :semicolon
+    end
+
+
     def parse_signal
       expect :signal
       expect :ident
-      while showNext.is_a?(:ident)
+      while showNext.is_a?(:comma)
         acceptIt
         expect :ident
       end
@@ -352,7 +373,8 @@ module VHDL
         expect :begin
         parse_body
         expect :end
-        expect :function
+        maybe :function
+        maybe :ident
       end
       expect :semicolon
     end
@@ -436,6 +458,7 @@ module VHDL
       if showNext.is_a?(:lparen)
         parse_sensitivity_list
       end
+      parse_decls
       expect :begin
       parse_body
       expect :end
@@ -557,7 +580,7 @@ module VHDL
     end
 
     def parse_seq_stmt
-      puts "parse_seq_stmt line #{showNext.pos.first}"
+      #puts "parse_seq_stmt line #{showNext.pos.first}"
       case showNext.kind
       when :null
         parse_null_stmt
@@ -575,7 +598,7 @@ module VHDL
         parse_report
       when :return
         parse_return
-      when :ident
+      when :ident,:selected_name
         parse_assign
       else
         raise "ERROR : parse_seq_stmt : #{pp showNext}"
@@ -592,6 +615,7 @@ module VHDL
       if showNext.is_a? [:vassign,:sassign]
         acceptIt
       end
+
       parse_expression
 
       while showNext.is_a?(:comma)
@@ -642,8 +666,10 @@ module VHDL
       expect :ident
       expect :in
       parse_expression
-      expect :to
-      parse_expression
+      if showNext.is_a? :to
+        expect :to
+        parse_expression
+      end
       expect :loop
       parse_body
       expect :end
@@ -737,7 +763,7 @@ module VHDL
     end
 
     def parse_term
-      if showNext.is_a? [:ident,:selected_name,:decimal_literal,:char_literal,:string_literal,:lparen,:others,:not,:sub]
+      if showNext.is_a? [:ident,:selected_name,:decimal_literal,:char_literal,:string_literal,:bit_string_literal,:lparen,:others,:not,:sub]
         case showNext.kind
         when :ident
           ret=Identifier.new(acceptIt)
@@ -749,7 +775,7 @@ module VHDL
           ret=IntLit.new(acceptIt)
         when :char_literal
           ret=acceptIt
-        when :string_literal
+        when :string_literal,:bit_string_literal
           ret=acceptIt
         when :selected_name
           ret=acceptIt
@@ -782,7 +808,18 @@ module VHDL
     # parenthesized expressions (NOT indexed or funcall)
     def parse_parenth
       expect :lparen
-      parse_expression
+      if showNext.is_a?(:others) # e.g : (others=>'0')
+        acceptIt
+        expect :imply
+        parse_expression
+      else
+        parse_expression
+      end
+
+      while showNext.is_a?(:comma) # aggregate
+        acceptIt
+        parse_expression
+      end
       expect :rparen
     end
 

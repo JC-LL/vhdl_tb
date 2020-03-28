@@ -18,6 +18,11 @@ class Token
     end
   end
 
+  def not_a? kind
+    result=self.is_a? kind
+    !result
+  end
+
   def is_not_a? kind
     case kind
     when Symbol
