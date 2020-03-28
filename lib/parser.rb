@@ -53,8 +53,8 @@ module VHDL
           raise "got #{showNext}"
           raise
         end
-        puts root.design_units.last.class
       end
+      root
     end
 
     def parse filename
@@ -224,7 +224,7 @@ module VHDL
 
     def parse_decls
       decls=[]
-      while showNext.kind!=:begin
+      while showNext.kind!=:begin and showNext.kind!=:end
         case showNext.kind
         when :constant
           decls << parse_constant
@@ -234,12 +234,16 @@ module VHDL
           decls << parse_signal
         when :procedure
           decls << parse_procedure
+        when :function
+          decls << parse_function
         when :component
           decls << parse_component_decl
         when :attribute
           decls << parse_attribute
+        when :variable
+          decls << parse_variable
         else
-          raise "in archi : #{pp showNext}"
+          raise "ERROR : parse_decls #{pp showNext}"
         end
       end
       decls
@@ -314,15 +318,43 @@ module VHDL
       parse_formal_parameter
       while showNext.is_a?(:comma)
         acceptIt
-        parse_formal_parameter
+        ret << parse_formal_parameter
       end
+      ret.flatten!
       ret
     end
 
     def parse_formal_parameter
       expect :ident
+      while showNext.is_a?(:comma)
+        acceptIt
+        expect :ident
+      end
       expect :colon
       parse_type
+    end
+
+    def parse_function
+      expect :function
+      expect :ident
+      if showNext.is_a?(:lparen)
+        acceptIt
+        parse_formal_parameters
+        expect :rparen
+      end
+
+      expect :return
+      parse_type
+
+      unless showNext.is_a?(:semicolon)
+        expect :is
+        parse_decls
+        expect :begin
+        parse_body
+        expect :end
+        expect :function
+      end
+      expect :semicolon
     end
 
     def parse_component_decl
@@ -351,6 +383,18 @@ module VHDL
       else
         raise "ERROR : parse_attribute #{showNext}"
       end
+      expect :semicolon
+    end
+
+    def parse_variable
+      expect :variable
+      expect :ident
+      while showNext.is_a?(:comma)
+        acceptIt
+        expect :ident
+      end
+      expect :colon
+      parse_type
       expect :semicolon
     end
     #======================================
@@ -467,6 +511,43 @@ module VHDL
         parse_expression
       end
     end
+    #============== package
+
+    def parse_package
+      expect :package
+      case showNext.kind
+      when :ident
+        parse_package_decl
+      when :body
+        parse_package_body
+      else
+        raise "ERROR : parse_package"
+      end
+    end
+
+    def parse_package_decl
+      expect :ident
+      expect :is
+      while !showNext.is_a?(:end)
+        parse_decls
+      end
+      expect :end
+      maybe :package
+      expect :semicolon
+    end
+
+    def parse_package_body
+      expect :body
+      expect :ident
+      expect :is
+      while !showNext.is_a?(:end)
+        parse_decls
+      end
+      expect :end
+      expect :package
+      expect :body
+      expect :semicolon
+    end
 
     #============== body
     def parse_body
@@ -492,6 +573,8 @@ module VHDL
         parse_wait
       when :report
         parse_report
+      when :return
+        parse_return
       when :ident
         parse_assign
       else
@@ -613,7 +696,13 @@ module VHDL
       expect :semicolon
     end
 
-    # expression
+    def parse_return
+      expect :return
+      parse_expression
+      expect :semicolon
+    end
+
+    # ============================= expression ===============================
     COMPARISON_OP=[:eq,:neq,:gt,:gte,:lt,:lte]
     def parse_expression
       t1=parse_additive
@@ -625,7 +714,7 @@ module VHDL
       return t1
     end
 
-    ADDITIV_OP  =[:add,:sub, :or]
+    ADDITIV_OP  =[:add,:sub, :or, :xor] #xor ?
     def parse_additive
       t1=parse_multiplicative
       while more? && showNext.is_a?(ADDITIV_OP)

@@ -1,6 +1,8 @@
 module VHDL
+    class AstNode
+    end
 
-    class Root
+    class Root < AstNode
       attr_accessor :design_units
       def initialize design_units=[]
         @design_units=design_units
@@ -41,6 +43,17 @@ module VHDL
         "#{self.lhs} #{self.op} #{self.rhs}"
       end
     end
+
+    class Expression < AstNode
+    end
+
+    class Binary < Expression
+      attr_accessor :lhs,:op,:rhs
+      def initialize
+      end
+    end
+
+
 
     class FuncCall
       attr_accessor :name,:actual_args

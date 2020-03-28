@@ -65,6 +65,7 @@ module VHDL
       keyword 'on'
       keyword 'open'
       keyword 'or'
+      keyword 'xor'
       keyword 'others'
       keyword 'out'
       keyword 'package'
