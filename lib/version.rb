@@ -1,3 +1,3 @@
-module VHDL
-  VERSION="0.8.0"
+module VHDL_TB
+  VERSION="0.8.2"
 end

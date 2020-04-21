@@ -1,7 +1,7 @@
 require_relative 'generic_lexer'
 require_relative 'generic_parser'
 
-module VHDL
+module VHDL_TB
   class Lexer < GenericLexer
     def initialize
       super

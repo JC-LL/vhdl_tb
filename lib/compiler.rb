@@ -6,7 +6,7 @@ require_relative 'ast'
 require_relative 'parser'
 require_relative 'version'
 
-module VHDL
+module VHDL_TB
 
  TestBench=Struct.new(:name)
 
@@ -38,7 +38,7 @@ module VHDL
      @symtable << "sreset"
      begin
        tb_txt=@engine.result(binding)
-       tb_filename="#{@tb.name}.vhd"
+       tb_filename="#{@tb.name}.vhd".downcase
        File.open(tb_filename,'w'){|f| f.puts tb_txt}
        puts "testbench generated : #{tb_filename}"
      rescue Exception => e

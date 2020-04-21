@@ -2,7 +2,7 @@ require "optparse"
 
 require_relative "compiler"
 
-module VHDL
+module VHDL_TB
 
   class Runner
 

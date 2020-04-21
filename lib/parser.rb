@@ -3,7 +3,7 @@ require_relative 'generic_parser'
 require_relative 'ast'
 require_relative 'lexer'
 
-module VHDL
+module VHDL_TB
 
   class Parser < GenericParser
     attr_accessor :lexer,:tokens
@@ -785,7 +785,7 @@ module VHDL
           puts "cannot parse term : #{showNext}"
         end
       end
-      while showNext && showNext.is_a?([:dot,:lbrack,:attribute_literal,:lparen,:ns,:ps,:ms,:after,:ampersand])
+      while showNext && showNext.is_a?([:lbrack,:attribute_literal,:lparen,:ns,:ps,:ms,:after,:ampersand])
         if par=parenthesized?
           #par.name=ret
           ret=par

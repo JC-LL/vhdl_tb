@@ -1,4 +1,4 @@
-module VHDL
+module VHDL_TB
     class AstNode
     end
 

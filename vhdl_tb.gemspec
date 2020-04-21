@@ -16,8 +16,10 @@ Gem::Specification.new do |s|
                    "lib/generic_parser.rb",
                    "lib/lexer.rb",
                    "lib/parser.rb",
+                   "lib/runner.rb",
                    "lib/ast.rb",
                    "lib/compiler.rb",
+                   "lib/version.rb",
                    "lib/template.tb.vhd",
                    "tests/circuit.vhd"
                   ]
